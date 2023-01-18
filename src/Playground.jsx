@@ -4,20 +4,21 @@ import Loading from "./Loading";
 
 function Playground() {
   const map = useRef({});
-  const [mousePos, setMousePos] = useState({});
-  const [closestImg, setClosestImg] = useState("");
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [closestImg, setClosestImg] = useState({ url: "", translateX: 0, translateY: 0 });
 
   useEffect(() => {
     let cancel = false;
     const id = setTimeout(() => {
       setClosestImg(chooseImg(mousePos));
-    }, 2000);
+    }, 1500);
 
     return () => {
       cancel = true;
       clearTimeout(id);
-      setClosestImg("");
+      setClosestImg({ url: "", translateX: 0, translateY: 0 });
     };
+    // console.log(mousePos);
   }, [mousePos]);
 
   function calculateMousePos(event) {
@@ -32,21 +33,22 @@ function Playground() {
 
   function chooseImg(mousePos) {
     let url = "";
+    let x = 0;
+    let y = 0;
     let minDistance = 200;
 
     images.map((el) => {
       let distance = Math.round(Math.sqrt(sqr(el.y - mousePos.y) + sqr(el.x - mousePos.x)));
-      console.log(distance);
       if (distance < minDistance) {
         url = el.url;
         minDistance = distance;
+        x = el.x;
+        y = el.y;
       }
     });
-
     if (url !== "") {
-      return url;
+      return { url, translateX: `${mousePos.x - x}%`, translateY: `${mousePos.y - y}%` };
     }
-    console.log("current distance is:", minDistance);
   }
 
   return (
@@ -55,12 +57,21 @@ function Playground() {
       onMouseMove={(event) => {
         calculateMousePos(event);
       }}
-      className="bg-slate-900 min-h-[370px] min-w-[370px] w-[1200px] h-[1200px]  text-4xl flex justify-center items-center"
+      className="min-h-[370px] min-w-[370px] w-[1080px] h-[1080px]  text-4xl flex justify-center items-center overflow-hidden"
     >
-      {closestImg ? <img className="w-full h-full object-cover" src={closestImg} alt="" /> : <Loading />}
+      {closestImg.url ? (
+        <img
+          className={`min-w-[110%] min-h-[110%] object-cover`}
+          src={closestImg.url}
+          style={{ transform: `translate(${closestImg.translateX}, ${closestImg.translateY})` }}
+          alt=""
+        />
+      ) : (
+        <Loading />
+      )}
       {/* <img
-        className="w-full h-full object-cover"
-        src="https://images.pexels.com/photos/1398185/pexels-photo-1398185.jpeg"
+        className="min-w-[110%] min-h-[110%] object-cover"
+        src="https://images.unsplash.com/photo-1630359555185-87e1a286cf6b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1588&q=80"
         alt=""
       /> */}
     </div>
