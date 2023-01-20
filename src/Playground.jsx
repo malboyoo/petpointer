@@ -57,11 +57,11 @@ function Playground() {
       onMouseMove={(event) => {
         calculateMousePos(event);
       }}
-      className="min-h-[370px] min-w-[370px] w-[1080px] h-[1080px]  text-4xl flex justify-center items-center overflow-hidden"
+      className="min-h-[350px] min-w-[350px] w-[1080px] h-[1080px]  text-4xl flex justify-center items-center overflow-hidden"
     >
       {closestImg.url ? (
         <img
-          className={`min-w-[110%] min-h-[110%] object-cover`}
+          className={`w-[110%] h-[110%]  object-cover`}
           src={closestImg.url}
           style={{ transform: `translate(${closestImg.translateX}, ${closestImg.translateY})` }}
           alt=""
